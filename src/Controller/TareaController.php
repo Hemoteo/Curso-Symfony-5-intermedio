@@ -22,6 +22,8 @@ class TareaController extends AbstractController
      */
     public function index(TareaRepository $tareaRepository): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         return $this->render('tarea/index.html.twig', [
             'tareas' => $tareaRepository->findAll(),
         ]);
@@ -32,6 +34,8 @@ class TareaController extends AbstractController
      */
     public function new(Security $security, Request $request, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $tarea = new Tarea();
         $form = $this->createForm(TareaType::class, $tarea);
         $form->handleRequest($request);
@@ -55,6 +59,8 @@ class TareaController extends AbstractController
      */
     public function show(Tarea $tarea): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         return $this->render('tarea/show.html.twig', [
             'tarea' => $tarea,
         ]);
@@ -65,6 +71,8 @@ class TareaController extends AbstractController
      */
     public function edit(Tarea $tarea, Request $request, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $form = $this->createForm(TareaType::class, $tarea);
         $form->handleRequest($request);
 
@@ -85,6 +93,8 @@ class TareaController extends AbstractController
      */
     public function delete(Tarea $tarea, Request $request, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         if ($this->isCsrfTokenValid('delete'.$tarea->getId(), $request->request->get('_token'))) {
             $em->remove($tarea);
             $em->flush();
@@ -98,6 +108,8 @@ class TareaController extends AbstractController
      */
     public function finalizar(Tarea $tarea, Request $request, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         if (!$request->isXmlHttpRequest()) {
             throw $this->createNotFoundException();
         }
