@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @AppAssert\TareaUnica
- * @ORM\Entity(repositoryClass=TareaRepository::class) 
+ * @ORM\Entity(repositoryClass=TareaRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Tarea
 {
@@ -26,6 +27,30 @@ class Tarea
      */
     private $descripcion;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $finalizada;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $creadoEn;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tareas")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $usuario;
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setValorCreadoEn(): void
+    {
+        $this->creadoEn = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -39,6 +64,42 @@ class Tarea
     public function setDescripcion(string $descripcion): self
     {
         $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    public function getFinalizada(): ?bool
+    {
+        return $this->finalizada;
+    }
+
+    public function setFinalizada(bool $finalizada): self
+    {
+        $this->finalizada = $finalizada;
+
+        return $this;
+    }
+
+    public function getCreadoEn(): ?\DateTimeInterface
+    {
+        return $this->creadoEn;
+    }
+
+    public function setCreadoEn(\DateTimeInterface $creadoEn): self
+    {
+        $this->creadoEn = $creadoEn;
+
+        return $this;
+    }
+
+    public function getUsuario(): ?User
+    {
+        return $this->usuario;
+    }
+
+    public function setUsuario(?User $usuario): self
+    {
+        $this->usuario = $usuario;
 
         return $this;
     }
