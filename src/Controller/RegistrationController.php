@@ -30,6 +30,10 @@ class RegistrationController extends AbstractController
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -48,7 +52,9 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            $this->emailVerifier->sendEmailConfirmation(
+                'app_verify_email',
+                $user,
                 (new TemplatedEmail())
                     ->from(new Address('tareas@admin.com', 'App Tareas'))
                     ->to($user->getEmail())
